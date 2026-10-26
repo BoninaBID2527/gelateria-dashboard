@@ -1,0 +1,14 @@
+id,nome,tipo,num_gusti,grammi
+1,Cono piccolo,Cono,2,
+2,Cono medio,Cono,3,
+3,Cono grande,Cono,4,
+4,Coppetta piccola,Coppetta,2,
+5,Coppetta media,Coppetta,3,
+6,Coppetta grande,Coppetta,4,
+7,Vaschetta 350 g,Vaschetta,2,350
+8,Vaschetta 500 g,Vaschetta,3,500
+9,Vaschetta 750 g,Vaschetta,3,750
+10,Vaschetta 1000 g,Vaschetta,4,1000
+11,Vaschetta 1500 g,Vaschetta,5,1500
+12,Frappè,Bevanda,1,
+13,Affogato al caffè,Bevanda,1,

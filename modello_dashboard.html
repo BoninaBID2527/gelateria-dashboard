@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="it" data-tema="chiaro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gelateria · Dashboard vendite</title>
+<script>document.documentElement.dataset.tema = matchMedia("(prefers-color-scheme: dark)").matches ? "scuro" : "chiaro";</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF5E2; --card: #FFFCF6; --bordo: #F0E0C6; --bordo-2: #F8ECD8;
+    --testo: #3A282C; --testo-2: #7A5F64;
+    --primario: #C8466B; --primario-2: #F08AA6; --primario-3: #FCE1E8; --su-primario: #FFFFFF;
+    --accento: #F2B13A; --giallo-3: #FFF0BC; --giallo-i: #A87400;
+    --pist-3: #E3F1D9; --pist-i: #4B8A45;
+    --mirt: #6F82D6; --mirt-3: #E6E9FA; --mirt-i: #4A5BB8; --acqua: #6F82D6;
+    --ok: #3F7F3B; --no: #C2412F;
+    --lato-bg: linear-gradient(180deg, #FADDE3 0%, #F7CDD7 55%, #F3BCC9 100%);
+    --lato-testo: #5A2C3A; --lato-testo-2: #A5707E; --lato-riga: rgba(130,50,75,.16);
+    --voce-attiva: #FFFCF6; --su-voce-attiva: #C8466B; --voce-hover: rgba(255,255,255,.55);
+    --logo-bg: linear-gradient(135deg, #EE6C8F, #C8466B);
+    --deco: rgba(255,255,255,.34); --deco-acc: 38%;
+    --s24: #E6C9A2; --s25: #F28BA7; --s26: #B8365D;
+    --ombra: 0 1px 2px rgba(120,70,50,.06), 0 10px 28px -14px rgba(120,70,50,.22);
+    --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color-scheme: light;
+  }
+  [data-tema="scuro"] {
+    --bg: #1B1315; --card: #261A1D; --bordo: #3A2A2E; --bordo-2: #2E2124;
+    --testo: #FBEEE4; --testo-2: #BCA3A5;
+    --primario: #F2799A; --primario-2: #F7A3BA; --primario-3: #3D222B; --su-primario: #2B0F19;
+    --accento: #F2C162; --giallo-3: #3A3019; --giallo-i: #F2C162;
+    --pist-3: #223222; --pist-i: #8CCB86;
+    --mirt: #8FA2EA; --mirt-3: #232844; --mirt-i: #9FB0F2; --acqua: #8FA2EA;
+    --ok: #8CCB86; --no: #F08A78;
+    --lato-bg: linear-gradient(180deg, #33202A 0%, #2A1A22 60%, #231419 100%);
+    --lato-testo: #FBE6EA; --lato-testo-2: #C99AA6; --lato-riga: rgba(255,255,255,.1);
+    --voce-attiva: #432A35; --su-voce-attiva: #FBD3DD; --voce-hover: rgba(255,255,255,.07);
+    --logo-bg: linear-gradient(135deg, #F2799A, #C8466B);
+    --deco: rgba(255,255,255,.045); --deco-acc: 14%;
+    --s24: #7A6258; --s25: #E58AA5; --s26: #FBD3DD;
+    --ombra: 0 1px 2px rgba(0,0,0,.3), 0 10px 28px -14px rgba(0,0,0,.55);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--testo); font-family: var(--font); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible { outline: 2px solid var(--primario-2); outline-offset: 2px; }
+
+  .app { display: grid; grid-template-columns: 274px minmax(0, 1fr); min-height: 100vh; }
+
+  /* ---------- Menu laterale ---------- */
+  .lato { position: sticky; top: 12px; height: calc(100vh - 24px); margin: 12px 0 12px 12px; border-radius: 24px; background: var(--lato-bg); color: var(--lato-testo); display: flex; flex-direction: column; overflow: hidden; z-index: 40; box-shadow: 0 14px 34px -18px rgba(150,50,80,.45); }
+  .lato::before { content: ""; position: absolute; left: -90px; bottom: -120px; width: 330px; height: 330px; border-radius: 50%; background: var(--deco); pointer-events: none; }
+  .lato::after { content: ""; position: absolute; right: -50px; bottom: 90px; width: 150px; height: 150px; border-radius: 50%; background: color-mix(in srgb, var(--accento) var(--deco-acc), transparent); pointer-events: none; }
+  .marchio { display: flex; align-items: center; gap: .75rem; padding: 1.4rem 1.25rem 1.1rem; position: relative; z-index: 1; }
+  .marchio .logo { width: 44px; height: 44px; border-radius: 14px; background: var(--logo-bg); display: grid; place-items: center; color: #fff; flex: none; box-shadow: 0 6px 14px -6px rgba(200,70,107,.7); }
+  .marchio strong { display: block; font-size: 1.25rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.1; }
+  .marchio strong span { font-weight: 400; opacity: .85; }
+  .marchio small { display: block; font-size: .74rem; color: var(--lato-testo-2); margin-top: .2rem; }
+  .menu { padding: .25rem .7rem 1rem; display: grid; gap: .15rem; position: relative; z-index: 1; overflow-y: auto; }
+  .menu hr { border: 0; border-top: 1px solid var(--lato-riga); margin: .75rem .4rem; }
+  .menu h6 { margin: .5rem .75rem .35rem; font-size: .68rem; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--lato-testo-2); }
+  .voce { display: flex; align-items: center; gap: .75rem; width: 100%; padding: .62rem .8rem; border: 0; border-radius: 10px; background: none; color: var(--lato-testo); font-size: .93rem; font-weight: 500; text-align: left; transition: background .15s; }
+  .voce:hover { background: var(--voce-hover); }
+  .voce[aria-current="page"] { background: var(--voce-attiva); color: var(--su-voce-attiva); font-weight: 650; box-shadow: 0 4px 12px -4px rgba(150,60,85,.35); }
+  .lato-piede { margin-top: auto; padding: 1rem 1.25rem 1.2rem; font-size: .76rem; color: var(--lato-testo-2); border-top: 1px solid var(--lato-riga); position: relative; z-index: 1; }
+  .lato-piede b { color: var(--lato-testo); font-weight: 600; }
+  .velo { display: none; }
+
+  /* ---------- Barra in alto ---------- */
+  .corpo { min-width: 0; }
+  .alto { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: .75rem; padding: .7rem 1.75rem; background: color-mix(in srgb, var(--bg) 90%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--bordo); }
+  .alto .spazio { flex: 1; }
+  .icona-btn { width: 38px; height: 38px; display: grid; place-items: center; background: var(--card); border: 1px solid var(--bordo); border-radius: 10px; color: var(--testo); flex: none; }
+  .icona-btn:hover { background: var(--bordo-2); }
+  #apri { display: none; }
+  .chip { display: inline-flex; align-items: center; gap: .45rem; padding: .35rem .8rem; border: 1px solid var(--bordo); background: var(--card); border-radius: 999px; font-size: .82rem; color: var(--testo-2); white-space: nowrap; }
+  .chip i { width: .5rem; height: .5rem; border-radius: 50%; background: var(--accento); }
+  .seg { display: inline-flex; padding: 3px; gap: 2px; background: var(--bordo-2); border: 1px solid var(--bordo); border-radius: 11px; }
+  .seg button { border: 0; background: none; padding: .38rem .85rem; border-radius: 8px; font-size: .86rem; font-weight: 600; color: var(--testo-2); }
+  .seg button[aria-pressed="true"] { background: var(--primario); color: var(--su-primario); box-shadow: 0 1px 3px rgba(0,0,0,.18); }
+
+  /* ---------- Contenuto ---------- */
+  main { padding: 1.75rem 1.75rem 3rem; max-width: 1260px; display: grid; gap: 1.4rem; }
+  .testa-pagina { display: flex; align-items: center; gap: 1rem; }
+  .icona-pagina { width: 50px; height: 50px; border-radius: 14px; background: var(--primario-3); color: var(--primario); display: grid; place-items: center; flex: none; }
+  .testa-pagina h1 { margin: 0; font-size: 1.7rem; font-weight: 800; letter-spacing: -.025em; line-height: 1.15; }
+  .testa-pagina p { margin: .1rem 0 0; color: var(--testo-2); font-size: .95rem; }
+
+  .kpi-riga { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .kpi { background: var(--card); border: 1px solid var(--bordo); border-radius: 16px; padding: 1.1rem 1.25rem 1.15rem; box-shadow: var(--ombra); }
+  .kpi-sopra { display: flex; align-items: center; justify-content: space-between; gap: .5rem; color: var(--testo-2); font-size: .86rem; font-weight: 600; }
+  .bolla { width: 36px; height: 36px; border-radius: 50%; background: var(--primario-3); color: var(--primario); display: grid; place-items: center; flex: none; }
+  .bolla.b2 { background: var(--giallo-3); color: var(--giallo-i); }
+  .bolla.b3 { background: var(--pist-3); color: var(--pist-i); }
+  .bolla.b4 { background: var(--mirt-3); color: var(--mirt-i); }
+  .kpi strong { display: block; margin: .55rem 0 .45rem; font-size: 2rem; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .kpi .sotto { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; font-size: .82rem; color: var(--testo-2); min-height: 1.6rem; }
+  .pill { display: inline-flex; align-items: center; gap: .25rem; padding: .12rem .55rem; border-radius: 999px; font-size: .78rem; font-weight: 700; background: var(--pist-3); color: var(--ok); }
+  .pill.giu { background: color-mix(in srgb, var(--no) 14%, var(--card)); color: var(--no); }
+  .pill.neutra { background: var(--bordo-2); color: var(--testo-2); }
+
+  .griglia { display: grid; align-items: start; gap: 1.4rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr)); }
+  .largo { grid-column: 1 / -1; }
+  .due-col { display: grid; align-items: start; gap: 1.4rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr)); }
+  .col { display: grid; gap: 1.4rem; min-width: 0; }
+  .pannello { background: var(--card); border: 1px solid var(--bordo); border-radius: 16px; padding: 1.4rem 1.5rem; box-shadow: var(--ombra); min-width: 0; }
+  .pannello h2 { margin: 0 0 .25rem; font-size: 1.08rem; font-weight: 700; letter-spacing: -.01em; line-height: 1.3; }
+  .pannello .nota { margin: 0 0 1.1rem; font-size: .86rem; color: var(--testo-2); }
+  .pannello h3 { margin: 1.1rem 0 .3rem; font-size: .92rem; font-weight: 700; }
+  .pannello p, .pannello li { font-size: .92rem; }
+  .pannello ul { margin: .25rem 0 0; padding-left: 1.15rem; }
+  .pannello li { margin-bottom: .35rem; color: var(--testo-2); }
+  .pannello li b, .pannello p b { color: var(--testo); font-weight: 650; }
+
+  svg.grafico { width: 100%; height: auto; display: block; overflow: visible; }
+  svg .gr { stroke: var(--bordo); stroke-width: 1; stroke-dasharray: 3 5; }
+  svg .as { fill: var(--testo-2); font-size: 12.5px; font-family: var(--font); }
+  .legenda { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; margin-top: .9rem; font-size: .84rem; color: var(--testo-2); }
+  .legenda i { display: inline-block; width: .7rem; height: .7rem; border-radius: 50%; margin-right: .4rem; vertical-align: -1px; }
+
+  .barre { display: grid; gap: .8rem; }
+  .barra-riga { display: grid; grid-template-columns: minmax(6.5rem, 9.5rem) 1fr auto; gap: .8rem; align-items: center; font-size: .9rem; }
+  .barra-riga .etichetta { font-weight: 600; line-height: 1.25; }
+  .barra-riga small { display: block; font-weight: 400; color: var(--testo-2); font-size: .76rem; }
+  .pista { position: relative; height: .7rem; background: var(--bordo-2); border-radius: 999px; }
+  .riempi { height: 100%; background: linear-gradient(90deg, var(--primario-2), var(--primario)); border-radius: 999px; min-width: 6px; }
+  .riempi.neg { background: var(--mirt); }
+  .riempi.acc { background: linear-gradient(90deg, #F9DC84, var(--accento)); }
+  .riferimento { position: absolute; top: -5px; bottom: -5px; width: 0; border-left: 2px dashed var(--testo-2); opacity: .55; }
+  .valore { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; min-width: 3.4rem; white-space: nowrap; }
+
+  .colonne { display: flex; align-items: flex-end; gap: .55rem; height: 230px; padding-top: 1.6rem; }
+  .colonna { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; font-size: .78rem; min-width: 0; }
+  .colonna .barretta { width: 100%; background: linear-gradient(180deg, var(--primario-2), var(--primario)); border-radius: 9px 9px 3px 3px; min-height: 4px; }
+  .colonna .barretta.acc { background: linear-gradient(180deg, #F9DC84, var(--accento)); }
+  .colonna b { margin-bottom: .3rem; font-variant-numeric: tabular-nums; font-weight: 650; font-size: .76rem; }
+  .colonna span { margin-top: .45rem; color: var(--testo-2); font-weight: 600; }
+
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { text-align: left; font-size: .74rem; letter-spacing: .05em; text-transform: uppercase; color: var(--testo-2); font-weight: 650; padding: 0 .6rem .6rem 0; border-bottom: 1px solid var(--bordo); }
+  td { padding: .75rem .6rem .75rem 0; border-bottom: 1px solid var(--bordo-2); font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: 0; }
+  th:last-child, td:last-child { text-align: right; padding-right: 0; }
+  .pos { display: inline-grid; place-items: center; width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--primario-3); color: var(--primario); font-weight: 700; font-size: .8rem; margin-right: .6rem; }
+  td .sub { display: inline-block; margin-left: .4rem; padding: .05rem .55rem; border-radius: 999px; background: var(--giallo-3); color: var(--giallo-i); font-size: .74rem; font-weight: 650; }
+  td b { font-weight: 700; }
+
+  .scorri { overflow-x: auto; padding-bottom: .25rem; }
+  .caldo { display: grid; grid-template-columns: 3rem repeat(12, minmax(2.7rem, 1fr)); gap: 4px; min-width: 580px; font-size: .78rem; }
+  .caldo .cella { height: 2.4rem; display: grid; place-items: center; border-radius: 7px; font-weight: 650; font-variant-numeric: tabular-nums; }
+  .caldo .testa { color: var(--testo-2); font-weight: 600; display: grid; place-items: center; }
+  .caldo .riga { color: var(--testo-2); font-weight: 600; display: flex; align-items: center; }
+  .scala { display: flex; align-items: center; gap: .6rem; margin-top: 1rem; font-size: .8rem; color: var(--testo-2); }
+  .scala i { display: block; width: 140px; height: .55rem; border-radius: 999px; background: linear-gradient(90deg, color-mix(in srgb, var(--primario) 6%, var(--card)), var(--primario)); }
+
+  .dato-grande { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .9rem; margin-bottom: 1.2rem; }
+  .dato-grande div { background: var(--giallo-3); border-radius: 12px; padding: .8rem 1rem; }
+  .dato-grande strong { display: block; font-size: 1.55rem; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; color: var(--primario); }
+  .dato-grande span { font-size: .82rem; color: var(--testo-2); }
+
+  @media (max-width: 1000px) {
+    .app { grid-template-columns: minmax(0, 1fr); }
+    .lato { position: fixed; top: 0; left: 0; margin: 0; height: 100vh; border-radius: 0 24px 24px 0; width: 280px; transform: translateX(-102%); transition: transform .25s ease; box-shadow: 10px 0 40px rgba(0,0,0,.25); }
+    .lato:not(.aperto) { box-shadow: none; }
+    .lato.aperto { transform: none; }
+    .velo.visibile { display: block; position: fixed; inset: 0; background: rgba(10,20,14,.5); z-index: 35; }
+    #apri { display: grid; }
+    .alto { padding: .65rem 1rem; }
+    .chip.periodo { display: none; }
+    main { padding: 1.25rem 1rem 2.5rem; }
+  }
+  @media (max-width: 520px) {
+    .seg button { padding: .38rem .6rem; }
+    .testa-pagina h1 { font-size: 1.4rem; }
+    .icona-pagina { width: 44px; height: 44px; }
+    svg .as { font-size: 21px; }
+    .barra-riga { grid-template-columns: 1fr auto; row-gap: .4rem; }
+    .barra-riga .pista { grid-column: 1 / -1; grid-row: 2; }
+    .pannello { padding: 1.15rem 1.1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="lato" id="lato" aria-label="Menu">
+    <div class="marchio">
+      <div class="logo" id="logo"></div>
+      <div><strong>Gelateria<span> Vendite</span></strong><small>Capire le vendite, giorno per giorno.</small></div>
+    </div>
+    <nav class="menu" id="menu"></nav>
+    <div class="lato-piede" id="piede"></div>
+  </aside>
+  <div class="velo" id="velo"></div>
+
+  <div class="corpo">
+    <header class="alto">
+      <button type="button" class="icona-btn" id="apri" aria-label="Apri il menu"></button>
+      <span class="chip periodo"><i></i><span id="periodo"></span></span>
+      <div class="spazio"></div>
+      <div class="seg" id="anni" role="group" aria-label="Anno"></div>
+      <button type="button" class="icona-btn" id="tema" aria-label="Cambia tema"></button>
+    </header>
+    <main id="pagina"></main>
+  </div>
+</div>
+
+<script>
+const D = /*DATI*/null;
+
+/* ---------- Utilità ---------- */
+const MESI = ["", "Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"];
+const GIORNI = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"];
+const GIORNI_LUNGHI = ["lunedì", "martedì", "mercoledì", "giovedì", "venerdì", "sabato", "domenica"];
+const $ = (s) => document.querySelector(s);
+const nf = (n, d = 0) => n.toLocaleString("it-IT", { minimumFractionDigits: d, maximumFractionDigits: d });
+const eur = (n) => nf(n) + " €";
+const pct = (n, d = 1) => nf(n, d) + "%";
+const somma = (a, f) => a.reduce((s, x) => s + f(x), 0);
+const media = (a, f) => (a.length ? somma(a, f) / a.length : 0);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const data_it = (iso) => { const [a, m, g] = iso.split("-"); return `${+g} ${MESI[+m].toLowerCase()} ${a}`; };
+const bello = (m) => { if (m <= 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(m))); const f = m / p; return ([1, 2, 4, 5, 8, 10].find((x) => f <= x)) * p; };
+const migliaia = (v) => (v >= 1000 ? nf(v / 1000, v % 1000 ? 1 : 0) + "k" : nf(v));
+const maiusc = (s) => s[0].toUpperCase() + s.slice(1);
+
+const IC = {
+  dash: '<rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/>',
+  pioggia: '<path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2"/><path d="M16 14v6M8 14v6M12 16v6"/>',
+  gelato: '<path d="m7 11 4.08 10.35a1 1 0 0 0 1.84 0L17 11"/><path d="M17 7A5 5 0 0 0 7 7"/><path d="M17 7a2 2 0 0 1 0 4H7a2 2 0 0 1 0-4"/>',
+  orologio: '<circle cx="12" cy="12" r="9.5"/><path d="M12 6.5V12l3.5 2"/>',
+  info: '<circle cx="12" cy="12" r="9.5"/><path d="M12 11v5.5M12 7.6v.1"/>',
+  menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+  sole: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2.5 12h2M19.5 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  luna: '<path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5z"/>',
+  euro: '<path d="M18 7.2A7 7 0 1 0 18 16.8M4 10h10M4 14h10"/>',
+  scontrino: '<path d="M5 3h14v18l-3-2-2 2-2-2-2 2-2-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+  barre: '<path d="M6 20V10M12 20V4M18 20v-7"/>',
+  carta: '<rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19"/>',
+  su: '<path d="M7 17 17 7M8 7h9v9"/>',
+  giu: '<path d="M7 7l10 10M17 8v9H8"/>',
+};
+const ico = (n, s = 20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${IC[n]}</svg>`;
+
+let anno = "tutti";
+let scheda = "panoramica";
+const giorniSel = () => D.giorni.filter((g) => anno === "tutti" || g.anno === anno);
+const anniSel = () => (anno === "tutti" ? D.anni : [anno]);
+
+/* ---------- Componenti grafici ---------- */
+function curva(p) {
+  if (p.length < 2) return "";
+  let d = `M${p[0][0]},${p[0][1]}`;
+  for (let i = 0; i < p.length - 1; i++) {
+    const p0 = p[i - 1] || p[i], p1 = p[i], p2 = p[i + 1], p3 = p[i + 2] || p2, t = 0.18;
+    const lo = Math.min(p1[1], p2[1]), hi = Math.max(p1[1], p2[1]);
+    const c1y = Math.min(hi, Math.max(lo, p1[1] + (p2[1] - p0[1]) * t));
+    const c2y = Math.min(hi, Math.max(lo, p2[1] - (p3[1] - p1[1]) * t));
+    d += ` C${p1[0] + (p2[0] - p0[0]) * t},${c1y} ${p2[0] - (p3[0] - p1[0]) * t},${c2y} ${p2[0]},${p2[1]}`;
+  }
+  return d;
+}
+
+function lineChart(serie, etichette, fmt, titolo) {
+  const W = 640, H = 290, L = 54, R = 16, T = 14, B = 32;
+  const valori = serie.flatMap((s) => s.v.filter((v) => v != null));
+  const max = bello(Math.max(...valori, 1));
+  const x = (i) => L + (W - L - R) * (etichette.length === 1 ? 0.5 : i / (etichette.length - 1));
+  const y = (v) => T + (H - T - B) * (1 - v / max);
+  let s = `<svg class="grafico" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(titolo)}">`;
+  for (let k = 0; k <= 4; k++) {
+    const v = (max * k) / 4;
+    s += `<line class="gr" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="as" x="${L - 10}" y="${y(v) + 4}" text-anchor="end">${fmt(v)}</text>`;
+  }
+  etichette.forEach((e, i) => { s += `<text class="as" x="${x(i)}" y="${H - 8}" text-anchor="middle">${e}</text>`; });
+  serie.forEach((se) => {
+    const punti = se.v.map((v, i) => (v == null ? null : [x(i), y(v)])).filter(Boolean);
+    const d = curva(punti);
+    if (se.area && punti.length > 1) s += `<path d="${d} L${punti[punti.length - 1][0]},${y(0)} L${punti[0][0]},${y(0)} Z" fill="${se.c}" opacity=".13"/>`;
+    s += `<path d="${d}" fill="none" stroke="${se.c}" stroke-width="${se.w}" stroke-linecap="round" stroke-linejoin="round" opacity="${se.o}"/>`;
+    se.v.forEach((v, i) => {
+      if (v != null) s += `<circle cx="${x(i)}" cy="${y(v)}" r="${se.w + 1.2}" fill="${se.c}" stroke="var(--card)" stroke-width="2.2" opacity="${se.o}"><title>${esc(se.nome)} · ${etichette[i]}: ${fmt(v)}</title></circle>`;
+    });
+  });
+  return s + "</svg>";
+}
+
+function legenda(voci) {
+  return `<div class="legenda">${voci.map((v) => `<span><i style="background:${v.c}"></i>${esc(v.nome)}</span>`).join("")}</div>`;
+}
+
+function barre(voci, { riferimento = null, scala = null } = {}) {
+  const max = scala ?? Math.max(...voci.map((v) => v.v), 1);
+  return `<div class="barre">${voci.map((v) => `
+    <div class="barra-riga">
+      <div class="etichetta">${esc(v.nome)}${v.sub ? `<small>${esc(v.sub)}</small>` : ""}</div>
+      <div class="pista"><div class="riempi${v.tono ? " " + v.tono : ""}" style="width:${Math.min(100, (v.v / max) * 100)}%"></div>${riferimento != null ? `<div class="riferimento" style="left:${(riferimento / max) * 100}%"></div>` : ""}</div>
+      <div class="valore">${v.testo}</div>
+    </div>`).join("")}</div>`;
+}
+
+function colonne(voci, fmt) {
+  const max = Math.max(...voci.map((v) => v.v), 1);
+  const top = Math.max(...voci.map((v) => v.v));
+  return `<div class="colonne">${voci.map((v) => `
+    <div class="colonna"><b>${fmt(v.v)}</b><div class="barretta${v.v === top ? " acc" : ""}" style="height:${(v.v / max) * 100}%"></div><span>${esc(v.nome)}</span></div>`).join("")}</div>`;
+}
+
+function dispersione(punti) {
+  const W = 640, H = 310, L = 54, R = 16, T = 14, B = 38;
+  const x0 = Math.floor(Math.min(...punti.map((p) => p.x)) / 5) * 5;
+  const x1 = Math.ceil(Math.max(...punti.map((p) => p.x)) / 5) * 5;
+  const ymax = bello(Math.max(...punti.map((p) => p.y), 1));
+  const x = (v) => L + ((W - L - R) * (v - x0)) / (x1 - x0);
+  const y = (v) => T + (H - T - B) * (1 - v / ymax);
+  let s = `<svg class="grafico" viewBox="0 0 ${W} ${H}" role="img" aria-label="Temperatura massima e incasso di ogni giornata">`;
+  for (let k = 0; k <= 4; k++) { const v = (ymax * k) / 4; s += `<line class="gr" x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}"/><text class="as" x="${L - 10}" y="${y(v) + 4}" text-anchor="end">${migliaia(v)}</text>`; }
+  for (let v = x0; v <= x1; v += 5) s += `<text class="as" x="${x(v)}" y="${H - 16}" text-anchor="middle">${v}°</text>`;
+  s += `<text class="as" x="${(L + W - R) / 2}" y="${H}" text-anchor="middle">Temperatura massima del giorno</text>`;
+  [false, true].forEach((pioggia) => punti.filter((p) => p.pioggia === pioggia).forEach((p) => {
+    s += `<circle cx="${x(p.x)}" cy="${y(p.y)}" r="4.2" fill="${pioggia ? "var(--acqua)" : "var(--primario-2)"}" opacity="${pioggia ? ".8" : ".6"}"><title>${p.t}</title></circle>`;
+  }));
+  return s + "</svg>" + legenda([{ nome: "Giornata asciutta", c: "var(--primario-2)" }, { nome: "Giornata con pioggia", c: "var(--acqua)" }]);
+}
+
+function delta(v, testo) {
+  const su = v >= 0;
+  return `<span class="pill${su ? "" : " giu"}">${ico(su ? "su" : "giu", 13)}${su ? "+" : ""}${pct(v)}</span><span>${testo}</span>`;
+}
+
+/* ---------- Pagina 1: Panoramica ---------- */
+function paginaPanoramica() {
+  const g = giorniSel();
+  const inc = somma(g, (x) => x.inc), sc = somma(g, (x) => x.scon);
+  let sottoInc = `<span class="pill neutra">${D.anni[0]}–${D.anni[D.anni.length - 1]}</span>`;
+  if (anno !== "tutti") {
+    const prec = D.giorni.filter((x) => x.anno === anno - 1);
+    sottoInc = prec.length ? delta((inc / somma(prec, (x) => x.inc) - 1) * 100, `rispetto al ${anno - 1}`) : `<span class="pill neutra">primo anno dei dati</span>`;
+  }
+
+  const colori = ["var(--s24)", "var(--s25)", "var(--s26)"];
+  const serie = D.anni.map((a, i) => {
+    const attiva = anno === "tutti" || anno === a;
+    return {
+      nome: String(a), c: colori[i % 3], w: attiva ? 3.4 : 2, o: attiva ? 1 : 0.4,
+      v: [3, 4, 5, 6, 7, 8, 9, 10].map((m) => { const gm = D.giorni.filter((x) => x.anno === a && x.mese === m); return gm.length ? somma(gm, (x) => x.inc) : null; }),
+    };
+  });
+
+  const perGiorno = GIORNI.map((n, i) => ({ nome: n, v: media(g.filter((x) => x.gs === i + 1), (x) => x.inc) }));
+  const migliori = [...g].sort((a, b) => b.inc - a.inc).slice(0, 5);
+  const carta = D.anni.map((a) => { const ga = D.giorni.filter((x) => x.anno === a); return { nome: String(a), v: somma(ga, (x) => x.carta) / somma(ga, (x) => x.scon) * 100 }; });
+  const meglio = perGiorno.reduce((m, x) => (x.v > m.v ? x : m));
+
+  const sm = D.anni.map((a) => { const ga = D.giorni.filter((x) => x.anno === a); return { nome: String(a), v: somma(ga, (x) => x.inc) / somma(ga, (x) => x.scon) }; });
+  const cresce = sm.every((x, i) => i === 0 || x.v > sm[i - 1].v);
+  const pannelloMedio = `
+    <section class="pannello">
+      <h2>${cresce ? "Lo scontrino medio sale ogni anno" : "Lo scontrino medio per anno"}</h2>
+      <p class="nota">Incasso diviso numero di scontrini: contano i prezzi e quanti prodotti compra ogni cliente.</p>
+      ${barre(sm.map((x) => ({ nome: x.nome, v: x.v, testo: nf(x.v, 2) + " €" })))}
+    </section>`;
+
+  return `
+  <div class="kpi-riga">
+    <div class="kpi"><div class="kpi-sopra">Incasso<span class="bolla b1">${ico("euro", 18)}</span></div><strong>${eur(inc)}</strong><div class="sotto">${sottoInc}</div></div>
+    <div class="kpi"><div class="kpi-sopra">Scontrini<span class="bolla b2">${ico("scontrino", 18)}</span></div><strong>${nf(sc)}</strong><div class="sotto">${nf(media(g, (x) => x.scon))} al giorno</div></div>
+    <div class="kpi"><div class="kpi-sopra">Scontrino medio<span class="bolla b3">${ico("barre", 18)}</span></div><strong>${nf(inc / sc, 2)} €</strong><div class="sotto">${nf(somma(g, (x) => x.art) / sc, 1)} prodotti a scontrino</div></div>
+    <div class="kpi"><div class="kpi-sopra">Pagamenti con carta<span class="bolla b4">${ico("carta", 18)}</span></div><strong>${pct(somma(g, (x) => x.carta) / sc * 100, 0)}</strong><div class="sotto">degli scontrini</div></div>
+  </div>
+  <div class="griglia">
+    <section class="pannello largo">
+      <h2>La stagione ha un picco netto a luglio e a metà ottobre è finita</h2>
+      <p class="nota">Incasso per mese. La gelateria chiude a metà ottobre e riapre il 1° marzo.</p>
+      ${lineChart(serie, ["Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott"], migliaia, "Incasso per mese")}
+      ${legenda(D.anni.map((a, i) => ({ nome: String(a), c: colori[i % 3] })))}
+    </section>
+    <div class="due-col largo"><div class="col">
+    <section class="pannello">
+      <h2>${maiusc(GIORNI_LUNGHI[perGiorno.indexOf(meglio)])} è il giorno migliore: ${eur(meglio.v)}</h2>
+      <p class="nota">Incasso medio per giorno della settimana.</p>
+      ${colonne(perGiorno, (v) => nf(v))}
+    </section>
+    ${pannelloMedio}
+    </div><div class="col">
+    <section class="pannello">
+      <h2>Le 5 giornate migliori</h2>
+      <p class="nota">Spesso sono feste, caldo, o tutte e due.</p>
+      <table><thead><tr><th>Giorno</th><th>Meteo</th><th>Incasso</th></tr></thead><tbody>
+      ${migliori.map((x, i) => `<tr><td><span class="pos">${i + 1}</span>${data_it(x.data)}${x.fest ? `<span class="sub">${esc(x.fest)}</span>` : ""}</td><td>${nf(x.tmax, 0)}°${x.pioggia >= 1 ? " · pioggia" : ""}</td><td><b>${eur(x.inc)}</b></td></tr>`).join("")}
+      </tbody></table>
+    </section>
+    <section class="pannello">
+      <h2>I clienti pagano sempre più con la carta</h2>
+      <p class="nota">Quota di scontrini pagati con carta, per anno.</p>
+      ${barre(carta.map((c) => ({ nome: c.nome, v: c.v, testo: pct(c.v, 0) })), { scala: 100 })}
+    </section>
+    </div></div>
+  </div>`;
+}
+
+/* ---------- Pagina 2: Meteo ---------- */
+function paginaMeteo() {
+  // Confronto onesto: ogni giornata si misura rispetto alla media del suo mese, così la stagione non falsa il risultato.
+  const baseMese = {}, tempMese = {};
+  D.giorni.forEach((x) => { (baseMese[x.anno + "-" + x.mese] ||= []).push(x.inc); (tempMese[x.mese] ||= []).push(x.tmax); });
+  const mediaMese = (k) => baseMese[k].reduce((a, b) => a + b, 0) / baseMese[k].length;
+  const mediaTemp = (m) => tempMese[m].reduce((a, b) => a + b, 0) / tempMese[m].length;
+  const g = giorniSel().map((x) => ({ ...x, r: x.inc / mediaMese(x.anno + "-" + x.mese), dt: x.tmax - mediaTemp(x.mese) }));
+
+  const gruppo = ([nome, sub, f]) => { const s = g.filter(f); return { nome, sub: `${sub} · ${s.length} giorni`, n: s.length, r: s.length ? media(s, (x) => x.r) : 0 }; };
+  const fasce = [
+    ["Asciutto", "meno di 1 mm", (x) => x.pioggia < 1],
+    ["Pioggia debole", "1–5 mm", (x) => x.pioggia >= 1 && x.pioggia < 5],
+    ["Pioggia", "5–15 mm", (x) => x.pioggia >= 5 && x.pioggia < 15],
+    ["Temporale", "oltre 15 mm", (x) => x.pioggia >= 15],
+  ].map(gruppo).filter((f) => f.n > 0);
+  const fresche = [
+    ["Più fresco del solito", "oltre 3° sotto la media del mese", (x) => x.dt < -3],
+    ["Nella norma", "entro 3° dalla media", (x) => x.dt >= -3 && x.dt <= 3],
+    ["Più caldo del solito", "oltre 3° sopra la media", (x) => x.dt > 3],
+  ].map(gruppo).filter((f) => f.n > 0);
+
+  const asciutto = fasce.find((f) => f.nome === "Asciutto");
+  const bagnati = g.filter((x) => x.pioggia >= 1);
+  const perdita = asciutto && bagnati.length ? (1 - media(bagnati, (x) => x.r) / asciutto.r) * 100 : 0;
+  const caldo = fresche.find((f) => f.nome === "Più caldo del solito"), freddo = fresche.find((f) => f.nome === "Più fresco del solito");
+  const titolo2 = caldo && freddo ? `Un giorno caldo rende il ${pct((caldo.r / freddo.r - 1) * 100, 0)} in più di uno fresco` : "Il caldo fa vendere di più";
+  const fmtR = (f) => ({ nome: f.nome, sub: f.sub, v: f.r * 100, testo: pct(f.r * 100, 0), tono: f.r < 1 ? "neg" : "" });
+  const punti = g.map((x) => ({ x: x.tmax, y: x.inc, pioggia: x.pioggia >= 1, t: `${data_it(x.data)}: ${nf(x.tmax, 0)}°, ${nf(x.pioggia, 1)} mm, ${eur(x.inc)}` }));
+
+  return `
+  <div class="griglia">
+    <section class="pannello">
+      <h2>Quando piove si perde il ${pct(perdita, 0)} dell'incasso</h2>
+      <p class="nota">Incasso di una giornata rispetto alla media del suo mese (100% = giornata normale). Il confronto è dentro lo stesso mese, così l'estate non altera il risultato.</p>
+      ${barre(fasce.map(fmtR), { riferimento: 100, scala: Math.max(130, ...fasce.map((f) => f.r * 100)) })}
+    </section>
+    <section class="pannello">
+      <h2>${titolo2}</h2>
+      <p class="nota">Stesso confronto, secondo quanto la giornata è più calda o fredda della media del suo mese.</p>
+      ${barre(fresche.map(fmtR), { riferimento: 100, scala: Math.max(130, ...fresche.map((f) => f.r * 100)) })}
+    </section>
+    <section class="pannello largo">
+      <h2>Ogni punto è una giornata</h2>
+      <p class="nota">Più sale la temperatura, più sale l'incasso. I punti blu (giornate di pioggia) restano quasi tutti in basso.</p>
+      ${dispersione(punti)}
+    </section>
+  </div>`;
+}
+
+/* ---------- Pagina 3: Gusti e prodotti ---------- */
+function paginaGusti() {
+  const conta = {}, perMese = {};
+  anniSel().forEach((a) => Object.entries(D.gusti.conteggi[a] || {}).forEach(([m, gusti]) => Object.entries(gusti).forEach(([nome, n]) => {
+    conta[nome] = (conta[nome] || 0) + n;
+    (perMese[m] ||= { tot: 0, frutta: 0 });
+    perMese[m].tot += n;
+    if (D.gusti.categorie[nome] === "Frutta") perMese[m].frutta += n;
+  })));
+  const totale = somma(Object.values(conta), (n) => n);
+  const top = Object.entries(conta).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const serieFrutta = [{ nome: "Gusti alla frutta", c: "var(--accento)", w: 3.4, o: 1, area: true, v: [3, 4, 5, 6, 7, 8, 9, 10].map((m) => (perMese[m] ? (perMese[m].frutta / perMese[m].tot) * 100 : null)) }];
+  const marzo = serieFrutta[0].v[0], agosto = serieFrutta[0].v[5];
+
+  const quotaPist = D.anni.map((a) => {
+    const tot = somma(Object.values(D.gusti.conteggi[a] || {}), (m) => somma(Object.values(m), (n) => n));
+    const p = somma(Object.values(D.gusti.conteggi[a] || {}), (m) => m["Pistacchio"] || 0);
+    return { nome: String(a), v: (p / tot) * 100 };
+  });
+
+  const prod = {};
+  anniSel().forEach((a) => (D.prodotti[a] || []).forEach((p) => { (prod[p.nome] ||= { ...p, righe: 0, incasso: 0 }); prod[p.nome].righe += p.righe; prod[p.nome].incasso += p.incasso; }));
+  const lista = Object.values(prod);
+  const incTot = somma(lista, (p) => p.incasso);
+  const vasch = lista.filter((p) => p.tipo === "Vaschetta");
+  const kg = somma(vasch, (p) => (p.grammi * p.righe) / 1000);
+  const righeTot = somma(lista, (p) => p.righe);
+
+  return `
+  <div class="due-col"><div class="col">
+    <section class="pannello">
+      <h2>${top[0][0]} e ${top[1][0]} comandano la classifica</h2>
+      <p class="nota">I 10 gusti più serviti, in percentuale su tutti i gusti serviti.</p>
+      ${barre(top.map(([nome, n]) => ({ nome, v: n, testo: pct((n / totale) * 100, 1) })))}
+    </section>
+    <section class="pannello">
+      <h2>La frutta passa dal ${pct(marzo, 0)} di marzo al ${pct(agosto, 0)} di agosto</h2>
+      <p class="nota">Quota dei gusti alla frutta sul totale dei gusti serviti, mese per mese.</p>
+      ${lineChart(serieFrutta, ["Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott"], (v) => nf(v) + "%", "Quota frutta per mese")}
+    </section>
+  </div><div class="col">
+    <section class="pannello">
+      <h2>Le vaschette sono ${pct((righeTot ? (somma(vasch, (p) => p.righe) / righeTot) : 0) * 100, 0)} dei prodotti ma ${pct((somma(vasch, (p) => p.incasso) / incTot) * 100, 0)} dell'incasso</h2>
+      <p class="nota">Incasso per prodotto. In giallo le vaschette.</p>
+      <div class="dato-grande">
+        <div><strong>${nf(kg)} kg</strong><span>di gelato venduto in vaschetta</span></div>
+        <div><strong>${pct((somma(vasch, (p) => p.incasso) / incTot) * 100, 0)}</strong><span>dell'incasso viene dalle vaschette</span></div>
+      </div>
+      ${barre(lista.sort((a, b) => b.incasso - a.incasso).map((p) => ({ nome: p.nome, v: p.incasso, testo: migliaia(p.incasso) + " €", tono: p.tipo === "Vaschetta" ? "acc" : "" })))}
+    </section>
+    <section class="pannello">
+      <h2>Il pistacchio cresce ogni anno</h2>
+      <p class="nota">Quota del pistacchio sui gusti serviti.</p>
+      ${barre(quotaPist.map((p) => ({ nome: p.nome, v: p.v, testo: pct(p.v, 1) })))}
+    </section>
+  </div></div>`;
+}
+
+/* ---------- Pagina 4: Orari ---------- */
+function paginaOrari() {
+  const ore = Array.from({ length: 12 }, (_, i) => 12 + i);
+  const giorniPerGs = [1, 2, 3, 4, 5, 6, 7].map((gs) => giorniSel().filter((x) => x.gs === gs).length);
+  const m = GIORNI.map((_, r) => ore.map((h) => (giorniPerGs[r] ? somma(anniSel(), (a) => (D.orari[a] ? D.orari[a][r][h] : 0)) / giorniPerGs[r] : 0)));
+  const max = Math.max(...m.flat(), 1);
+  let picco = { v: 0, r: 0, h: 12 };
+  m.forEach((riga, r) => riga.forEach((v, i) => { if (v > picco.v) picco = { v, r, h: ore[i] }; }));
+  const perOra = ore.map((h, i) => ({ nome: String(h), v: somma(m, (riga) => riga[i]) / 7 }));
+  const oraTop = perOra.reduce((a, b) => (b.v > a.v ? b : a));
+
+  const celle = m.map((riga, r) => `<div class="riga">${GIORNI[r]}</div>` + riga.map((v, i) => {
+    const p = (v / max) * 100;
+    return `<div class="cella" style="background:color-mix(in srgb, var(--primario) ${p}%, var(--card)); color:${p > 74 ? "var(--su-primario)" : "var(--testo)"}" title="${GIORNI_LUNGHI[r]} alle ${ore[i]}: ${nf(v, 1)} scontrini in media">${nf(v, 0)}</div>`;
+  }).join("")).join("");
+
+  return `
+  <div class="griglia">
+    <section class="pannello largo">
+      <h2>Il picco è ${GIORNI_LUNGHI[picco.r]} alle ${picco.h}: circa ${nf(picco.v, 0)} scontrini in quell'ora</h2>
+      <p class="nota">Scontrini medi per ora e giorno della settimana (media sui giorni di apertura). Dopo le 20 la gelateria è aperta solo in estate, per questo le sere sembrano più tranquille.</p>
+      <div class="scorri"><div class="caldo">
+        <div></div>${ore.map((h) => `<div class="testa">${h}</div>`).join("")}
+        ${celle}
+      </div></div>
+      <div class="scala">Meno clienti <i></i> Più clienti</div>
+    </section>
+    <section class="pannello largo">
+      <h2>Due ondate: il pomeriggio alle ${oraTop.nome} e la sera dopo cena</h2>
+      <p class="nota">Scontrini medi per ora, in tutta la settimana.</p>
+      ${colonne(perOra, (v) => nf(v, 0))}
+    </section>
+  </div>`;
+}
+
+/* ---------- Pagina 5: Informazioni ---------- */
+function paginaInfo() {
+  const reali = D.meteo_fonti["Open-Meteo"] || 0, simulati = D.meteo_fonti["simulato"] || 0;
+  return `
+  <div class="due-col"><div class="col">
+    <section class="pannello">
+      <h2>Da dove arrivano i dati</h2>
+      <p class="nota">Sono dati simulati, non provengono da un'attività reale.</p>
+      <p>Uno script Python genera ogni scontrino di ogni giorno di apertura, dal 1° marzo al 15 ottobre, per tre stagioni. Il listino è quello di una gelateria vera: coni e coppette da 3, 3,50 e 4,50 €, vaschette a 22 € al kg in cinque formati.</p>
+      <p><b>Meteo di Torino:</b> ${reali ? `${nf(reali)} giorni reali (archivio Open-Meteo)` : "nessun giorno reale"}${simulati ? `${reali ? " e " : ", "}${nf(simulati)} giorni simulati` : ""}.</p>
+    </section>
+    <section class="pannello">
+      <h2>Cosa tiene conto la simulazione</h2>
+      <p class="nota">Le stesse cose che muovono le vendite in una gelateria vera.</p>
+      <ul>
+        <li><b>Giorno della settimana:</b> sabato e domenica vendono molto più di lunedì e martedì.</li>
+        <li><b>Festività:</b> compresa San Giovanni, patrono di Torino.</li>
+        <li><b>Stagione e ferie:</b> picco a luglio, calo a metà agosto.</li>
+        <li><b>Meteo:</b> il caldo fa salire le vendite, la pioggia le fa scendere.</li>
+        <li><b>Gusti e prezzi:</b> frutta d'estate, gusti stagionali, prezzi in aumento.</li>
+      </ul>
+    </section>
+  </div><div class="col">
+    <section class="pannello">
+      <h2>Come leggere i confronti con il meteo</h2>
+      <p class="nota">Una scelta per non farsi ingannare dalla stagione.</p>
+      <p>Ad aprile piove di più e si vende meno, ma si vende meno anche perché è aprile. Per questo ogni giornata è confrontata con la media <b>del suo stesso mese</b>: 100% vuol dire una giornata normale per quel periodo.</p>
+    </section>
+    <section class="pannello">
+      <h2>Piccolo glossario</h2>
+      <p class="nota">Le parole usate nella dashboard.</p>
+      <ul>
+        <li><b>Scontrino:</b> un pagamento. Può contenere più prodotti, ma conta una volta sola.</li>
+        <li><b>Scontrino medio:</b> incasso diviso numero di scontrini.</li>
+        <li><b>Gusti serviti:</b> ogni gusto messo in un cono, una coppetta o una vaschetta.</li>
+        <li><b>Quota carta:</b> percentuale di scontrini pagati con carta invece che in contanti.</li>
+      </ul>
+    </section>
+  </div></div>`;
+}
+
+/* ---------- Struttura della pagina ---------- */
+const PAGINE = {
+  panoramica: { nome: "Panoramica", icona: "dash", sotto: "Come sta andando la gelateria, in sintesi", fn: paginaPanoramica },
+  meteo: { nome: "Meteo", icona: "pioggia", sotto: "Quanto pesano pioggia e caldo sugli incassi", fn: paginaMeteo },
+  gusti: { nome: "Gusti e prodotti", icona: "gelato", sotto: "Cosa piace ai clienti e cosa porta più incasso", fn: paginaGusti },
+  orari: { nome: "Orari", icona: "orologio", sotto: "Quando arrivano i clienti", fn: paginaOrari },
+  info: { nome: "Informazioni", icona: "info", sotto: "Da dove arrivano i dati e come leggerli", fn: paginaInfo },
+};
+
+function disegna() {
+  const voce = (k) => `<button type="button" class="voce" data-scheda="${k}" ${k === scheda ? 'aria-current="page"' : ""}>${ico(PAGINE[k].icona, 19)}${PAGINE[k].nome}</button>`;
+  $("#menu").innerHTML = `<h6>Analisi</h6>${["panoramica", "meteo", "gusti", "orari"].map(voce).join("")}<hr><h6>Risorse</h6>${voce("info")}`;
+  $("#anni").innerHTML = ["tutti", ...D.anni].map((a) => `<button type="button" data-anno="${a}" aria-pressed="${a === anno}">${a === "tutti" ? "Tutti" : a}</button>`).join("");
+  $("#anni").hidden = scheda === "info";
+  const P = PAGINE[scheda];
+  $("#pagina").innerHTML = `<div class="testa-pagina"><div class="icona-pagina">${ico(P.icona, 26)}</div><div><h1>${P.nome}</h1><p>${P.sotto}</p></div></div>` + P.fn();
+}
+
+const chiudiMenu = () => { $("#lato").classList.remove("aperto"); $("#velo").classList.remove("visibile"); };
+document.addEventListener("click", (e) => {
+  const b = e.target.closest("button, .velo");
+  if (!b) return;
+  if (b.id === "apri") { $("#lato").classList.add("aperto"); $("#velo").classList.add("visibile"); return; }
+  if (b.id === "velo" || b.classList.contains("velo")) return chiudiMenu();
+  if (b.id === "tema") { aggiornaTema(document.documentElement.dataset.tema === "scuro" ? "chiaro" : "scuro"); return; }
+  if (b.dataset.anno) anno = b.dataset.anno === "tutti" ? "tutti" : +b.dataset.anno;
+  else if (b.dataset.scheda) { scheda = b.dataset.scheda; chiudiMenu(); window.scrollTo(0, 0); }
+  else return;
+  disegna();
+});
+
+function aggiornaTema(t) {
+  document.documentElement.dataset.tema = t;
+  $("#tema").innerHTML = ico(t === "scuro" ? "sole" : "luna", 19);
+  $("#tema").setAttribute("aria-label", t === "scuro" ? "Passa al tema chiaro" : "Passa al tema scuro");
+}
+
+$("#logo").innerHTML = ico("gelato", 26);
+$("#apri").innerHTML = ico("menu", 20);
+aggiornaTema(document.documentElement.dataset.tema);
+const primo = D.giorni[0].data, ultimo = D.giorni[D.giorni.length - 1].data;
+$("#periodo").textContent = `${data_it(primo)} – ${data_it(ultimo)} · dati simulati`;
+const reali = D.meteo_fonti["Open-Meteo"] || 0;
+$("#piede").innerHTML = `<b>${nf(somma(D.giorni, (x) => x.art))} prodotti</b> in ${nf(somma(D.giorni, (x) => x.scon))} scontrini<br>Meteo: ${reali ? "reale (Open-Meteo)" : "simulato"}`;
+disegna();
+</script>
+</body>
+</html>

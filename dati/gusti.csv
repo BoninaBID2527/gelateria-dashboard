@@ -1,0 +1,22 @@
+id,nome,categoria,dal_mese,al_mese,vegano
+1,Nocciola,Creme,3,10,0
+2,Pistacchio,Creme,3,10,0
+3,Cioccolato fondente,Creme,3,10,0
+4,Gianduja,Creme,3,10,0
+5,Stracciatella,Creme,3,10,0
+6,Fiordilatte,Creme,3,10,0
+7,Crema,Creme,3,10,0
+8,Caffè,Creme,3,10,0
+9,Bacio,Creme,3,10,0
+10,Bicerin,Creme,3,10,0
+11,Zabaione,Creme,9,4,0
+12,Marron glacé,Creme,9,10,0
+13,Limone,Frutta,3,10,1
+14,Fragola,Frutta,4,9,1
+15,Lampone,Frutta,3,10,1
+16,Frutti di bosco,Frutta,3,10,1
+17,Mango,Frutta,3,10,1
+18,Pesca,Frutta,6,9,1
+19,Melone,Frutta,6,8,1
+20,Anguria,Frutta,7,8,1
+21,Fico,Frutta,8,10,1
